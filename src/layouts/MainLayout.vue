@@ -30,7 +30,7 @@
         <q-img
           class="q-ma-lg shadow-15"
           style="border-radius: 50%;width:75px; height: 75px;"
-          src="https://lh3.googleusercontent.com/a-/AOh14GjZE6lLd7kMU-iWIzkqs0MgzN_CULOmraWI0i_X=s96-c"
+          :src="getPhotoURL"
         />
       </div>
     </q-header>
@@ -48,7 +48,7 @@
             <q-img
               class="q-ma-lg shadow-15"
               style="border-radius: 50%;width:75px; height: 75px;"
-              src="https://lh3.googleusercontent.com/a-/AOh14GjZE6lLd7kMU-iWIzkqs0MgzN_CULOmraWI0i_X=s96-c"
+              :src="getPhotoURL"
             />
             <!-- <q-icon
               size="100px"
@@ -245,6 +245,15 @@ const logout = () => {
 }
 aside {
   width: 500px;
+}
+.q-placeholder,
+.q-field__label, .q-field__underline
+{
+  font-size: 1.7rem;
+  height: 120%
+}
+.q-field__label{
+ padding: 3px;
 }
 .menu-title {
   /* font-family: "Lobster", cursive; */
