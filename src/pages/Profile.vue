@@ -9,11 +9,11 @@
           style="border-radius: 50%; width: 200px; height: 200px"
         />
         <q-btn class="q-ml-xl" label="change" @click="editProfile" />
-        <q-btn class="q-ml-xl" label="remove" />
+        <!-- <q-btn class="q-ml-xl" label="remove" /> -->
       </q-card-section>
 
       <div class="q-mt-xl text-h4 text-bold">Personal Stuff</div>
-      <q-card-section>
+      <q-card-section class="q-pt-xl">
         <div class="text-grey-7 text-subtitle">My status</div>
         <q-scroll-area style="height: 60px; max-width: 90vw; white-space: nowrap">
           <span @click="setActiveStatus(status.id)" v-for="(status, i) in statuses" :key="i">
@@ -58,7 +58,7 @@
         </div>
       </q-card-section>
       <div class="q-mt-xl text-h4 text-bold">Social accouts</div>
-      <q-card-section>
+      <q-card-section class="q-pt-lg">
         <q-icon
           v-for="(site, i) in socialSites"
           :key="i"
@@ -67,10 +67,10 @@
           editSocialSiteName == site.name ? 1 : 0.5}`"
           :name="site.icon"
           size="xl"
-          class="q-mr-sm q-pa-sm bg-prima ry"
+          class="q-mr-sm q-pa-sm q-mt-lg"
           @click="editSocialSiteName = site.name"
         >
-          <q-badge rounded color="positive" floating label="✔" />
+          <q-badge rounded color="negative" floating label="❌" />
         </q-icon>
         <span class="text-subtitle" v-if="!editSocialSiteName">click to add</span>
         <transition
@@ -78,31 +78,39 @@
           enter-active-class="animated zoomInDown"
           enter-leave-class="animated zoomOutDown"
         >
-          <q-input
-            v-if="editSocialSiteName"
-            class="q-ma-md"
-            v-model="text"
-            :label="`Add ${editSocialSiteName} profile URL`"
-          >
-            <template v-slot:append>
-              <q-icon
-                v-if="text !== ''"
-                name="close"
-                @click="editSocialSiteName = ''"
-                class="cursor-pointer"
-              />
-            </template>
-          </q-input>
+          <div v-if="editSocialSiteName">
+            <q-input
+              class="q-ma-md"
+              v-model="newSocialSiteName"
+              :label="`Add ${editSocialSiteName} profile URL`"
+            >
+              <template v-slot:append>
+                <q-icon
+                  v-if="newSocialSiteName !== ''"
+                  name="close"
+                  @click="editSocialSiteName = ''"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-input>
+            <q-btn style="float: right" class="q-my-sm" label="Save" @click="addSocialMedia" />
+          </div>
         </transition>
       </q-card-section>
       <div class="q-mt-xl text-h4 text-bold">General</div>
       <q-card-section style="margin-bottom:400px">
         <div class="row">
-          <q-input class="col q-mr-md q-my-sm" label="Full name" v-model="userName" />
+          <q-input class="col q-mr-md q-my-xl" label="Full name" v-model="userName" />
           <!-- <q-input class="col q-ml-md q-my-sm" label="Last name" v-model="lastName" /> -->
         </div>
-        <q-input label="Email" class="q-my-sm" readonly v-model="user.email" />
-        <q-btn style="float: right" class="q-my-sm" label="Save" />
+        <q-input label="Email" class="q-my-sm" disable v-model="user.email" />
+        <q-btn
+          style="float: right"
+          v-if="user.name != userName"
+          class="q-my-sm"
+          label="Save"
+          @click="changeUserName"
+        />
       </q-card-section>
     </div>
   </q-page>
@@ -132,6 +140,7 @@ const activeStatus = ref("online");
 
 
 const editSocialSiteName = ref('');
+const newSocialSiteName = ref('https://');
 
 // const badges = ref([
 //   require("../assets/badges/new.svg"),
@@ -199,6 +208,41 @@ const editProfile = () => {
   //   width: "500px",
   // });
 };
+const addSocialMedia = () => {
+  // console.log('add social media', editSocialSiteName.value, newSocialSiteName.value);
+  $q.notify({
+    color: "positive",
+    textColor: "white",
+    position: "top-right",
+    message: `Added ${editSocialSiteName.value}`,
+  });
+
+  // api.patch('/user/addSocialLink',{
+  //   uid: user.value.uid,
+  //   siteId: editSocialSiteName.value,
+  //   link: newSocialSiteName.value
+  // })
+  // .then(res => {
+  //   console.log(res);
+  // })
+  // .catch(err => {
+  //   console.log(err);
+  // })
+
+}
+
+const changeUserName = () => {
+  // console.log("changing user name", userName.value);
+  api.put("/user/changeUserName", {
+    uid: user.value.uid,
+    newName: userName.value
+  }).then(res => {
+    // console.log("user name changed", res.data);
+  }).catch(err => {
+    // console.log("error changing user name", err);
+  })
+}
+
 const setActiveStatus = (id) => {
   console.log("setting");
   activeStatus.value = id;

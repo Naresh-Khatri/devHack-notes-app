@@ -1,19 +1,20 @@
-<template>
-  <q-page>
-    <div class="top-left-btn">
-      <q-btn
-        class="absolute"
-        color="primary"
-        style="background: white; width: 60px; height: 60px; z-index: 10"
-        flat
-        dense
-        round
-        icon="arrow_back_ios"
-        aria-label="Menu"
-        @click="$router.push('/')"
-      />
-    </div>
-    <!-- <q-btn
+<template >
+  <div class="bg-gr ey-3">
+    <q-page class="flex justify-center bg-white" style="width:60%; border-radius:40px; margin: 0 auto">
+      <div class="top-left-btn">
+        <q-btn
+          class="absolute"
+          color="primary"
+          style="background: white; width: 60px; height: 60px; z-index: 10"
+          flat
+          dense
+          round
+          icon="arrow_back_ios"
+          aria-label="Menu"
+          @click="$router.push('/')"
+        />
+      </div>
+      <!-- <q-btn
       color="primary"
       style="
         background: white;
@@ -28,10 +29,10 @@
       icon="download"
       aria-label="Menu"
       @click="scrollBottom"
-    />-->
-    <div
-      class="date"
-      style="
+      />-->
+      <div
+        class="date"
+        style="
         width: 100vw;
         position: absolute;
         display: flex;
@@ -40,133 +41,150 @@
         z-index: 10;
         margin-top: 15px;
       "
-    >
-      <transition name="slide-fade">
-        <div v-if="canShowTopDate">
-          <q-chip color="secondary" ref="DateBox" text-color="white" size="17px">{{ topMsgDate }}</q-chip>
-        </div>
-      </transition>
-    </div>
-    <q-scroll-area @scroll="showTopDate" ref="scrollArea" class="absolute-full" style="height: 90%">
-      <!--       
+      >
+        <transition name="slide-fade">
+          <div v-if="canShowTopDate">
+            <q-chip color="secondary" ref="DateBox" text-color="white" size="17px">{{ topMsgDate }}</q-chip>
+          </div>
+        </transition>
+      </div>
+      <q-scroll-area
+        @scroll="showTopDate"
+        ref="scrollArea"
+        class="absolute-full"
+        style="height: 90%"
+      >
+        <!--       
       <q-chat-message
         bg-color="primary"
         text-color="white"
         class="q-mx-md text-white"
         name="Server"
         :text="['hey', 'how are you?']"
-      />-->
-      <!-- Chat msgs -->
-      <div v-for="(msg, index) in getMsgsData" :key="index">
-        <div>
-          <q-chat-message v-if="index === 0" :label="getDatestamp(msg.timestamp)" />
-          <q-chat-message
-            v-else-if="
-              getDate(msg.timestamp) !=
-              getDate(getMsgsData[index == 0 ? 0 : index - 1].timestamp)
-            "
-            :label="getDatestamp(msg.timestamp)"
-          />
-        </div>
-        <!-- {{msg.timestamp}} -->
-        <!-- {{getMsgsData[index].timestamp}} -->
-        <!-- {{ getMsgsData[index].user }} -->
-        <!-- {{ msg.uid }} -->
-        <transition
-          appear
-          :enter-active-class="`animated ${isOwner(msg.user) ? 'slideInRight' : 'slideInLeft'
-          } `"
-          v-if="index != 0"
-        >
-          <!-- dont show name if last msg is from same user
-          and show if date has passed-->
-
-          <q-chat-message
-            v-intersection="onChatMessageIntersection"
-            :key="index"
-            :data-id="index"
-            :sent="isOwner(msg.user)"
-            class="q-mx-sm text-white"
-            :avatar="
-              getMsgPhotoURL(msg.user) ||
-              'https://cdn.quasar.dev/img/avatar1.jpg'
-            "
-            :name="
-              getMsgsData[index - 1].user != msg.user ||
+        />-->
+        <!-- Chat msgs -->
+        <div v-for="(msg, index) in getMsgsData" :key="index">
+          <div>
+            <q-chat-message v-if="index === 0" :label="getDatestamp(msg.timestamp)" />
+            <q-chat-message
+              v-else-if="
                 getDate(msg.timestamp) !=
                 getDate(getMsgsData[index == 0 ? 0 : index - 1].timestamp)
-                ? `<span class='text-black'>${msg.name}</span>`
-                : ''
-            "
-            name-html
-            :text="[msg.text]"
-            :stamp="getTimestamp(msg.timestamp)"
-          />
+              "
+              :label="getDatestamp(msg.timestamp)"
+            />
+          </div>
+          <!-- {{msg.timestamp}} -->
+          <!-- {{getMsgsData[index].timestamp}} -->
+          <!-- {{ getMsgsData[index].user }} -->
+          <!-- {{ msg.uid }} -->
+          <transition
+            appear
+            :enter-active-class="`animated ${isOwner(msg.user) ? 'slideInRight' : 'slideInLeft'
+            } `"
+            v-if="index != 0"
+          >
+            <!-- dont show name if last msg is from same user
+            and show if date has passed-->
+
+            <q-chat-message
+              v-intersection="onChatMessageIntersection"
+              :key="index"
+              :data-id="index"
+              :sent="isOwner(msg.user)"
+              class="q-mx-sm text-white"
+              :class="msg.text.length <= 2 ? 'text-h6' : 'text-h6'"
+              :name="
+                getMsgsData[index - 1].user != msg.user ||
+                  getDate(msg.timestamp) !=
+                  getDate(getMsgsData[index == 0 ? 0 : index - 1].timestamp)
+                  ? `<span class='text-black'>${msg.name}</span>`
+                  : ''
+              "
+              name-html
+              :text="[msg.text]"
+              :stamp="getTimestamp(msg.timestamp)"
+            >
+              <template v-slot:avatar>
+                <img
+                  @click="handleProfileShow(msg.user)"
+                  style="cursor: pointer;"
+                  class="q-mx-sm q-message-avatar q-message-avatar--sent"
+                  :src="
+                    getMsgPhotoURL(msg.user) ||
+                    'https://cdn.quasar.dev/img/avatar1.jpg'
+                  "
+                />
+              </template>
+            </q-chat-message>
+          </transition>
+        </div>
+        <!-- typing indicators -->
+        <transition-group
+          appear
+          enter-active-class="animated slideInLeft"
+          leave-active-class="animated fadeOut"
+        >
+          <q-chat-message
+            v-for="(user, index) in getTypingUsers"
+            :key="index"
+            :name="user.username"
+            :avatar="user.photoURL || 'https://cdn.quasar.dev/img/avatar1.jpg'"
+            bg-color="amber"
+          >
+            <q-spinner-dots size="2rem"></q-spinner-dots>
+          </q-chat-message>
+        </transition-group>
+        <!-- typing users: {{ getTypingUsers }} -->
+      </q-scroll-area>
+      <!-- Scroll bottom button -->
+      <q-page-sticky position="bottom-right" :offset="[18, 88]">
+        <transition appear enter-active-class="animated slideInUp">
+          <q-btn
+            v-if="unreadChatCount"
+            @click="scrollBottom"
+            round
+            icon="expand_more"
+            color="primary"
+          >
+            <q-badge rounded color="orange" floating>
+              {{
+                unreadChatCount
+              }}
+            </q-badge>
+          </q-btn>
         </transition>
-      </div>
-      <!-- typing indicators -->
-      <transition-group
-        appear
-        enter-active-class="animated slideInLeft"
-        leave-active-class="animated fadeOut"
+      </q-page-sticky>
+      <!-- Text Input box -->
+      <q-input
+        filled
+        rounded
+        v-model="msgText"
+        placeholder="Type a message"
+        @keydown.enter="sendMsg"
+        @keydown="debounceSendMsg"
+        class="absolute-bottom q-ma-md"
       >
-        <q-chat-message
-          v-for="(user, index) in getTypingUsers"
-          :key="index"
-          :name="user.username"
-          :avatar="user.photoURL || 'https://cdn.quasar.dev/img/avatar1.jpg'"
-          bg-color="amber"
-        >
-          <q-spinner-dots size="2rem"></q-spinner-dots>
-        </q-chat-message>
-      </transition-group>
-      <!-- typing users: {{ getTypingUsers }} -->
-    </q-scroll-area>
-    <!-- Scroll bottom button -->
-    <q-page-sticky position="bottom-right" :offset="[18, 88]">
-      <transition appear enter-active-class="animated slideInUp">
-        <q-btn
-          v-if="unreadChatCount"
-          @click="scrollBottom"
-          round
-          icon="expand_more"
-          color="primary"
-        >
-          <q-badge rounded color="orange" floating>
-            {{
-              unreadChatCount
-            }}
-          </q-badge>
-        </q-btn>
-      </transition>
-    </q-page-sticky>
-    <!-- Text Input box -->
-    <q-input
-      filled
-      v-model="msgText"
-      placeholder="Type a message"
-      @keydown.enter="sendMsg"
-      @keydown="debounceSendMsg"
-      class="absolute-bottom q-ma-md"
-    >
-      <!-- isTyping: {{ typing }} -->
-      <!-- v-for="(user, index) in getTypingUsers"
-      :key="index"-->
-      <!-- <template v-slot:before>
+        <!-- isTyping: {{ typing }} -->
+        <!-- v-for="(user, index) in getTypingUsers"
+        :key="index"-->
+        <!-- <template v-slot:before>
         <q-avatar>
           <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
         </q-avatar>
-      </template>-->
+        </template>-->
 
-      <template v-slot:after>
-        <q-btn round dense flat color="green" icon="send" @click="sendMsg" />
-      </template>
-    </q-input>
-  </q-page>
+        <template v-slot:after>
+          <q-btn round dense flat color="green" icon="send" @click="sendMsg" />
+        </template>
+      </q-input>
+    </q-page>
+  </div>
 </template>
 
 <script>
 import io from "socket.io-client";
+import { api } from 'boot/axios'
 import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router'
@@ -205,7 +223,7 @@ export default {
       socket.value.on("connect", () => {
         console.log("conneted to ws - " + socket.value.id);
         // store.commit("updateSocket", socket.value);
-        if($q.loading.isActive){
+        if ($q.loading.isActive) {
           $q.notify({
             message: "✅ Connected to server 😎",
             color: "primary",
@@ -217,7 +235,7 @@ export default {
       });
       socket.value.on("disconnect", () => {
         console.log("disconneted from ws");
-         $q.loading.show({
+        $q.loading.show({
           message: 'Reconeccting to server...',
           boxClass: 'bg-grey-2 text-grey-9',
           spinner: QSpinnerOrbit,
@@ -238,7 +256,7 @@ export default {
       });
       socket.value.on("receiveMsg", (data) => {
         store.dispatch("updateTypingUsers", { uid: data.user, typing: false });
-        console.log(data);
+        // console.log(data);
         store.commit("appendNewMsgData", data);
         unreadChatCount.value++;
         //741 is the diff btw size and pos
@@ -279,6 +297,23 @@ export default {
     const getMsgPhotoURL = (uid) => {
       return prefix + "/user/photoURL/" + uid;
     };
+    const handleProfileShow = async (uid) => {
+      try {
+        const user = await api.post('/user/userData', { uid })
+        // console.log(user)
+        router.push({ name: 'profile-viewer', query: { uid: uid } })
+      }
+      catch (err) {
+        // console.log('error', err)
+        $q.notify({
+          message: "❌ Error fetching user data",
+          color: "red",
+          position: "top-right",
+          timeout: 2000
+        })
+      }
+
+    }
     const sendMsg = () => {
       //check login first 
       if (!getUserId.value) {
@@ -297,8 +332,8 @@ export default {
           })
         return
       }
-      canShowTopDate.value = !canShowTopDate.value;
       if (msgText.value == "") return;
+      canShowTopDate.value = !canShowTopDate.value;
       // console.log(getUserId.value);
       const payload = {
         user: getUserId.value,
@@ -450,6 +485,7 @@ export default {
       debounceSendMsg,
       getTypingUsers,
       unreadChatCount,
+      handleProfileShow,
       socket,
       topMsgDate,
       canShowTopDate,

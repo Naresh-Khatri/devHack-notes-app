@@ -67,7 +67,7 @@ export default store(function (/* { ssrContext } */) {
         state.socket = payload
       },
       updateTab(state, payload) {
-        console.log("go home", payload);
+        // console.log("go home", payload);
         state.tab = payload
       },
       addToTypingUsers(state, payload) {
@@ -82,7 +82,7 @@ export default store(function (/* { ssrContext } */) {
     },
     actions: {
       getUserData({ commit, state }, user) {
-        console.log('getuserdata', user)
+        // console.log('getuserdata', user)
         //to get extra user data from my db
         api.post('/user/userData', { uid: user.uid })
           .then(res => {
@@ -92,7 +92,7 @@ export default store(function (/* { ssrContext } */) {
           })
       },
       updateTypingUsers({ commit }, payload) {
-d        // console.log("updateTypingUsers", payload);
+        // console.log("updateTypingUsers", payload);
         if (payload.typing == true) {
           commit('addToTypingUsers', payload)
           //timeout to remove user from typingUsers
@@ -110,7 +110,7 @@ d        // console.log("updateTypingUsers", payload);
             // console.log(res.data)
           })
           .catch(err => {
-            console.log('couldnt get the materials', err)
+            // console.log('couldnt get the materials', err)
           })
       }
     },

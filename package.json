@@ -14,9 +14,12 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "firebase": "^9.6.3",
+    "pdfjs-dist": "^2.12.313",
     "quasar": "^2.0.0",
     "socket.io-client": "^4.4.1",
-    "vuex": "^4.0.1"
+    "vue-advanced-cropper": "^2.7.1",
+    "vuex": "^4.0.1",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",

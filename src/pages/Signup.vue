@@ -1,18 +1,24 @@
 <template>
   <q-page padding class="bg-dak">
     <div class="q-my-xl">
-      <div class="text-grey text-center q-ma-sm">Sign up with one of the option</div>
       <div class="row text-white q-mb-lg">
-        <div class="col flex flex-center">
+        <div class="col flex flex-center column">
           <q-btn flat @click="googleLogin">
             <img src="../assets/login/google.png" width="120" />
           </q-btn>
+          <q-img
+            class="q-mr-xl q-mt-sm"
+            v-if="!showFileUploadDrawer"
+            width="50px"
+            src="https://www.gstatic.com/classroom/web/home/dark_create_class_arrow.svg"
+          />
+          <div class="text-grey text-center q-ma-sm">More options coming in future....</div>
         </div>
         <!-- <div class="col flex flex-center">
           <q-btn flat>
             <img src="../assets/login/facebook.png" width="120" />
           </q-btn>
-        </div> -->
+        </div>-->
       </div>
     </div>
   </q-page>
@@ -49,7 +55,7 @@ export default {
           saveUser(res);
           // This gives you a Google Access Token. You can use it to access the Google API.
           const credential = GoogleAuthProvider.credentialFromResult(res);
-          console.log(credential);
+          // console.log(credential);
           const user = res.user;
           const userInfo = {
             uid: user.uid,
@@ -69,11 +75,11 @@ export default {
           });
           //store userInfo obj in localstorage
           // $q.localStorage.set("loggedUser", userInfo);
-          $router.push("/");
+          $router.push("/chat");
           //TODO: store userInfo obj in backend
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           $q.notify({
             color: "negative",
             message: "Couldn't login 👀",
@@ -97,17 +103,17 @@ export default {
         badges: [],
         interests: [],
       };
-      console.log(user);
-      console.log(userInfo);
+      // console.log(user);
+      // console.log(userInfo);
       try {
         const res = await api.post("/user/register", userInfo);
         const uid = JSON.parse(res.config.data).uid
         //store accepts userInfo with uid to search user in db
         store.dispatch("getUserData", { uid });
-        console.log(res);
-        console.log();
+        // console.log(res);
+        // console.log();
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     return {

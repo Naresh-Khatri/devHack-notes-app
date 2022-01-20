@@ -5,8 +5,8 @@ const routes = [
     children: [
       {
         path: "",
-        component: () => import("pages/Index.vue"),
-        name: "Home",
+        component: () => import("src/pages/Chat.vue"),
+        name: "chat",
         meta: {
           showMenu: true,
           statusBarStyle: { color: "#5455e5" },
@@ -17,21 +17,45 @@ const routes = [
         component: () => import("src/pages/Signup.vue"),
         name: "Login/Signup",
         meta: {
+          showMenu: false,
+          statusBarStyle: { color: "#5455e5" },
+        },
+      },
+      {
+        path: "chat",
+        component: () => import("src/pages/Chat.vue"),
+        name: "chat",
+        meta: {
           showMenu: true,
           statusBarStyle: { color: "#5455e5" },
         },
       },
       {
-        path: 'forum', component: () => import('pages/Forum.vue'), name: "Forum",
+        path: "profile",
+        component: () => import("pages/Profile.vue"),
+        name: "profile",
         meta: {
-          showMenu: false, statusBarStyle: { color: '#5455e5' }
-        }
+          showMenu: true,
+          statusBarStyle: { color: "#5455e5" },
+        },
       },
       {
-        path: 'profile', component: () => import('pages/Profile.vue'), name: "Profile",
+        path: "profile-viewer",
+        component: () => import("pages/ProfileViewer.vue"),
+        name: "profile-viewer",
         meta: {
-          showMenu: false, statusBarStyle: { color: '#5455e5' }
-        }
+          showMenu: true,
+          statusBarStyle: { color: "#5455e5" },
+        },
+      },
+      {
+        path: "notes",
+        component: () => import("pages/Notes.vue"),
+        name: "notes",
+        meta: {
+          showMenu: true,
+          statusBarStyle: { color: "#5455e5" },
+        },
       },
     ],
   },

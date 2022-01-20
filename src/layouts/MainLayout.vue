@@ -1,17 +1,21 @@
 <template>
   <q-layout view="hHr lpR fFf">
-    <q-header class="bg-white">
+    <q-header class="bg-white" v-if="$route.meta.showMenu">
+    <!-- <div class="text-black">
+      {{}}
+
+    </div>  -->
       <div class="flex items-center justify-between q-mx-lg">
         <!-- v-if="$route.meta.showMenu" -->
         <q-btn
-        v-if="true"
+          v-if="true"
           class="q-pa-lg"
           color="primary"
           dense
           flat
           size="lg"
           round
-          icon="menu"
+          :icon="leftDrawerOpen? 'fas fa-arrow-left':'menu'"
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
@@ -27,11 +31,13 @@
           aria-label="Menu"
           to="/"
         />
-        <q-img
-          class="q-ma-lg shadow-15"
-          style="border-radius: 50%;width:75px; height: 75px;"
-          :src="getPhotoURL"
-        />
+        <router-link to="/profile">
+          <q-img
+            class="q-ma-lg shadow-15"
+            style="border-radius: 50%;width:75px; height: 75px;"
+            :src="getPhotoURL"
+          />
+        </router-link>
       </div>
     </q-header>
 
@@ -41,7 +47,7 @@
 
     <!-- <div>Quasar v</div> -->
 
-    <q-drawer v-model="leftDrawerOpen" side="right" :width="windowWidth*0.6" overlay dark>
+    <q-drawer v-model="leftDrawerOpen" side="right" :width="windowWidth * 0.4" overlay dark>
       <q-list>
         <div class="q-pa-md q-pb-lg">
           <router-link to="/profile">
@@ -58,58 +64,69 @@
               :name="isLoggedIn ? 'img:' + getPhotoURL : 'person_off'"
             />-->
           </router-link>
-          <div v-if="!isLoggedIn">
-            <div class="text-h6 text-white">Unknown user</div>
-            <q-btn class="q-mr-sm" color="secondary" label="Sign up/login" to="signup" />
-          </div>
-          <div v-else>
-            <div>
+          <div class="flex justify-between">
+            <span>
               <span class="text-h4 text-white">{{ firstName }} {{ lastName }}</span>
-            </div>
+            </span>
             <q-btn color="negative" label="Logout" @click="logoutDialog = true" />
-
-            <q-dialog v-model="logoutDialog" persistent>
-              <q-card>
-                <q-card-section class="row items-center">
-                  <span>
-                    <q-avatar icon="logout" color="red" text-color="white" />
-                  </span>
-                  <span class="q-ml-sm">You are about to log out.</span>
-                </q-card-section>
-
-                <q-card-actions align="right">
-                  <q-btn flat label="Cancel" color="primary" v-close-popup />
-                  <q-btn flat label="Confirm" color="red" @click="logout()" />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
           </div>
+
+          <q-dialog v-model="logoutDialog" persistent>
+            <q-card>
+              <q-card-section class="row items-center">
+                <span>
+                  <q-avatar icon="logout" color="red" text-color="white" />
+                </span>
+                <span class="q-ml-sm">You are about to log out.</span>
+              </q-card-section>
+
+              <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="primary" v-close-popup />
+                <q-btn flat label="Confirm" color="red" @click="logout()" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </div>
       </q-list>
-
       <q-list class="flex column justify-center items-center" height>
         <q-item class="q-py-lg">
           <q-item-label class="flex items-center drawer-item">
             <q-icon size="lg" class="q-mr-xl drawer-icon" name="fas fa-comment" />
-            <router-link to="/profile" class="text-h4 text-white">Chat</router-link>
+            <router-link
+              to="/chat"
+              class="drawer-text text-h4"
+              :class="$route.name == 'chat' ? 'text-primary' : 'text-white'"
+            >Chat</router-link>
           </q-item-label>
         </q-item>
         <q-item class="q-py-lg">
           <q-item-label class="flex items-center drawer-item">
             <q-icon size="lg" class="q-mr-xl drawer-icon" name="fas fa-book" />
-            <router-link to="/notes" class="text-h4 text-white">Notes</router-link>
+            <router-link
+              to="/notes"
+              class="drawer-text text-h4"
+              :class="$route.name == 'notes' ? 'text-primary' : 'text-white'"
+            >Notes</router-link>
           </q-item-label>
         </q-item>
-        <q-item class="q-py-lg">
+        <!-- <q-item class="q-py-lg">
           <q-item-label class="flex items-center drawer-item">
-            <q-icon size="lg" class="q-mr-xl drawer-icon" name="fas fa-paint-brush" />
-            <router-link to="/draw" class="text-h4 text-white">Draw</router-link>
+            <q-icon size="lg" class="q-mr-xl drawer-icon text-pr imary" name="fas fa-paint-brush" />
+            <router-link
+              to="/draw"
+              class="drawer-text text-h4"
+              :class="$route.name == 'draw' ? 'text-primary' : 'text-white'"
+            >Draw</router-link>
           </q-item-label>
-        </q-item>
+        </q-item>-->
         <q-item class="q-py-lg">
           <q-item-label class="flex items-center drawer-item">
             <q-icon size="lg" class="q-mr-xl drawer-icon" name="fas fa-user" />
-            <router-link to="/profile" class="text-h4 text-white">Profile</router-link>
+            <router-link
+              to="/profile"
+              class="drawer-text text-h4"
+              :class="$route.name == 'profile' ? 'text-primary' : 'text-white'"
+            >Profile</router-link>
           </q-item-label>
         </q-item>
       </q-list>
@@ -128,8 +145,17 @@
             </q-tabs>
           </q-toolbar-title>
         </q-toolbar>
-      </q-footer> -->
-      <router-view />
+      </q-footer>-->
+      <router-view v-slot="{ Component }">
+        <transition
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+          appear
+          :duration="300"
+        >
+          <component :is="Component"></component>
+        </transition>
+      </router-view>
       <!-- </q-pull-to-refresh> -->
     </q-page-container>
   </q-layout>
@@ -138,7 +164,7 @@
 <script setup>
 import { ref, computed, onMounted, watchEffect } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { getAuth, signOut } from "firebase/auth";
 
@@ -147,6 +173,7 @@ import drawerLinksData from "../data/drawerLinksData.js";
 const store = useStore();
 const $q = useQuasar();
 const $router = useRouter();
+const $route = useRoute();
 
 const windowWidth = ref(window.innerWidth)
 
@@ -167,12 +194,13 @@ onMounted(() => {
   checkLogin();
   checkStorage();
   calcWindowWidth();
+  // console.log($route)
   // if ($q.platform.is.mobile)
   //   StatusBar.setBackgroundColor(this.$route.meta.statusBarStyle);
 });
 const calcWindowWidth = () => {
   window.onresize = () => {
-   windowWidth.value = window.innerWidth
+    windowWidth.value = window.innerWidth
   }
 };
 watchEffect(() => {
@@ -183,7 +211,7 @@ const checkLogin = () => {
   getAuth().onAuthStateChanged((user) => {
     if (user) {
       store.dispatch("getUserData", user);
-      console.log(user)
+      // console.log(user)
     } else {
       $q.dialog({
         title: "Login",
@@ -247,13 +275,13 @@ aside {
   width: 500px;
 }
 .q-placeholder,
-.q-field__label, .q-field__underline
-{
+.q-field__label,
+.q-field__underline {
   font-size: 1.7rem;
-  height: 120%
+  height: 120%;
 }
-.q-field__label{
- padding: 3px;
+.q-field__label {
+  padding: 3px;
 }
 .menu-title {
   /* font-family: "Lobster", cursive; */
@@ -308,11 +336,15 @@ a {
   text-decoration: none;
 }
 .drawer-item .drawer-icon {
-  transition: all 0.1s ease-in-out;
-  margin-right: 30 px;
+  transition: all 0.05s ease-in-out;
+  margin-left: 25px;
 }
 .drawer-item:hover .drawer-icon {
-  transition: all 0.1s ease-in-out;
-  margin-right: 10px;
+  transition: all 0.05s ease-in-out;
+  margin-left: 0px;
+  color: #1976d2;
+}
+.drawer-text:hover {
+  color: #1976d2;
 }
 </style>
